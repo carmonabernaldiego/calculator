@@ -1,7 +1,6 @@
 package calculadoraBasica;
 
 import java.awt.event.*;
-import java.text.DecimalFormat;
 
 public class Calculadora extends Interfaz implements ActionListener {
 	//  Declarar variables.
@@ -66,6 +65,11 @@ public class Calculadora extends Interfaz implements ActionListener {
 			} else if (e.getSource() == b9) {
 				display.setText("9");
 				nuevoNumero = false;
+			} else if (e.getSource() == b0) {
+				if(!display.getText().equals("0")) {
+					display.setText("0");
+					nuevoNumero = false;
+				}
 			}
 		} else {
 			if (e.getSource() == b1) {
@@ -99,7 +103,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 		//  Botón . - Punto decimal.
 		if (e.getSource() == bp) {
-			if (!puntoDecimal){
+			if (!puntoDecimal) {
 				display.setText(display.getText() + ".");
 				puntoDecimal = true;
 				nuevoNumero = false;
@@ -169,13 +173,25 @@ public class Calculadora extends Interfaz implements ActionListener {
 		operando1 = Double.parseDouble(display.getText());
 
 		switch (operacion) {
-			case "+" :  resultado = operando2 + operando1;
+			case "+" :
+				Suma suma = new Suma(operando1, operando2);
+				resultado = suma.getRes();
+				suma.imprimirResultado();
 				break;
-			case "-" :  resultado = operando2 - operando1;
+			case "-" :
+				Resta resta = new Resta(operando1, operando2);
+				resultado = resta.getRes();
+				resta.imprimirResultado();
 				break;
-			case "*" :  resultado = operando2 * operando1;
+			case "*" :
+				Multiplicacion multiplicacion = new Multiplicacion(operando1, operando2);
+				resultado = multiplicacion.getRes();
+				multiplicacion.imprimirResultado();
 				break;
-			case "/" :  resultado = operando2 / operando1;
+			case "/" :
+				Division division = new Division(operando1, operando2);
+				resultado = division.getRes();
+				division.imprimirResultado();
 				break;
 		}
 

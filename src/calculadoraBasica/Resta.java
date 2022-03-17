@@ -1,11 +1,11 @@
 package calculadoraBasica;
 
 public class Resta extends Operacion{
-	double resta;
+	private double resta;
 
-	public Resta(double n1, double n2) {
-		super(n1, n2, '-');
-		this.resta = n1 - n2;
+	public Resta(double num1, double num2) {
+		super(num1, num2, '-');
+		this.resta = num1 - num2;
 		this.setRes(this.resta);
 	}
 }

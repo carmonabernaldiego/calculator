@@ -1,11 +1,11 @@
 package calculadoraBasica;
 
 public class Multiplicacion extends Operacion{
-	double multi;
+	private double multiplicacion;
 
-	public Multiplicacion(double n1, double n2) {
-		super(n1, n2, '*');
-		this.multi = n1 * n2;
-		this.setRes(this.multi);
+	public Multiplicacion(double num1, double num2) {
+		super(num1, num2, '*');
+		this.multiplicacion = num1 * num2;
+		this.setRes(this.multiplicacion);
 	}
 }

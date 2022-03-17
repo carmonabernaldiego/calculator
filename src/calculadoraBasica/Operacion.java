@@ -1,50 +1,26 @@
 package calculadoraBasica;
 
 public class Operacion {
-	double n1;
-	double n2;
-	double res;
-	char operacion;
+	private char operacion;
+	private double num1;
+	private double num2;
+	private double resultado;
 
-	public Operacion(double n1, double n2, char operacion) {
-		this.n1 = n1;
-		this.n2 = n2;
+	public Operacion(double num1, double num2, char operacion) {
+		this.num1 = num1;
+		this.num2 = num2;
 		this.operacion = operacion;
-	}
-
-	public void mostrarResultado(){
-		System.out.println(this.n1+" "+this.operacion+" "+this.n2+" = "+this.res);
-	}
-
-	public double getN1() {
-		return n1;
-	}
-
-	public void setN1(double n1) {
-		this.n1 = n1;
-	}
-
-	public double getN2() {
-		return n2;
-	}
-
-	public void setN2(double n2) {
-		this.n2 = n2;
-	}
-
-	public char getOperacion() {
-		return operacion;
-	}
-
-	public void setOperacion(char operacion) {
-		this.operacion = operacion;
-	}
-
-	public double getRes() {
-		return res;
 	}
 
 	public void setRes(double res) {
-		this.res = res;
+		this.resultado = res;
+	}
+
+	public double getRes() {
+		return resultado;
+	}
+
+	public void imprimirResultado(){
+		System.out.println(this.num1 + " " + this.operacion + " " + this.num2 + " = " + this.resultado);
 	}
 }
