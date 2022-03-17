@@ -18,7 +18,7 @@ public class Interfaz extends JFrame {
 	private void initComponentes() {
 		//  Declarar componentes.
 		//  Display.
-		display = new JTextField();
+		display = new JTextField("0");
 		display.setFont(new Font("Dialog", Font.BOLD, 36));
 		display.setHorizontalAlignment(JTextField.RIGHT);
 		display.setEditable(false);
