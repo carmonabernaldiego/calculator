@@ -1,6 +1,7 @@
 package calculadoraBasica;
 
 import java.awt.event.*;
+import java.text.DecimalFormat;
 
 public class Calculadora extends Interfaz implements ActionListener {
 	//  Declarar variables.
@@ -108,83 +109,57 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón Suma.
 		if (e.getSource() == bs) {
 			if (operacion.equals("")) {
-				//Asocio la operación del botón a la variable
 				operacion = "+";
-				//Asigno a operando2 el valor del display (como double)
 				operando2 = Double.parseDouble(display.getText());
-				//Reseteo para poder introducir otro número y otro decimal
 				nuevoNumero = true;
 				puntoDecimal = false;
-				//Si tenía alguna pendiente, calculo el resultado de la anterior y luego me guardo la actual
 			} else {
-				operando2 = resultado(); //Se almacena en operando2 para poder encadenar operaciones posteriores
 				operacion = "+";
+				operando2 = resultado();
 			}
-			//SOUT para comprobar que estoy guardando los valores adecuados
-			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
 		//  Botón Resta.
 		if (e.getSource() == br) {
 			if (operacion.equals("")) {
-				//Asocio la operación del botón a la variable
 				operacion = "-";
-				//Asigno a operando2 el valor del display (como double)
 				operando2 = Double.parseDouble(display.getText());
-				//Reseteo para poder introducir otro número y otro decimal
 				nuevoNumero = true;
 				puntoDecimal = false;
-				//Si tenía alguna pendiente, calculo el resultado de la anterior y luego me guardo la actual
 			} else {
-				operando2 = resultado(); //Se almacena en operando2 para poder encadenar operaciones posteriores
 				operacion = "-";
+				operando2 = resultado();
 			}
-			//SOUT para comprobar que estoy guardando los valores adecuados
-			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
 		//  Botón Multiplicación.
 		if (e.getSource() == bm) {
 			if (operacion.equals("")) {
-				//Asocio la operación del botón a la variable
 				operacion = "*";
-				//Asigno a operando2 el valor del display (como double)
 				operando2 = Double.parseDouble(display.getText());
-				//Reseteo para poder introducir otro número y otro decimal
 				nuevoNumero = true;
 				puntoDecimal = false;
-				//Si tenía alguna pendiente, calculo el resultado de la anterior y luego me guardo la actual
 			} else {
-				operando2 = resultado(); //Se almacena en operando2 para poder encadenar operaciones posteriores
 				operacion = "*";
+				operando2 = resultado();
 			}
-			//SOUT para comprobar que estoy guardando los valores adecuados
-			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
 		//  Botón División.
 		if (e.getSource() == bd) {
 			if (operacion.equals("")) {
-				//Asocio la operación del botón a la variable
 				operacion = "/";
-				//Asigno a operando2 el valor del display (como double)
 				operando2 = Double.parseDouble(display.getText());
-				//Reseteo para poder introducir otro número y otro decimal
 				nuevoNumero = true;
 				puntoDecimal = false;
-				//Si tenía alguna pendiente, calculo el resultado de la anterior y luego me guardo la actual
 			} else {
-				operando2 = resultado(); //Se almacena en operando2 para poder encadenar operaciones posteriores
 				operacion = "/";
+				operando2 = resultado();
 			}
-			//SOUT para comprobar que estoy guardando los valores adecuados
-			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
 		//  Botón Resultado.
 		if (e.getSource() == bi) {
-			//Al pulsar el botón de resultado, directamente lo calculo y reseteo la calculadora,
-			//sin necesidad de almacenar el resultado para futuras operaciones
 			resultado();
 		}
 	}
