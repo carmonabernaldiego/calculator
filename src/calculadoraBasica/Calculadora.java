@@ -1,9 +1,6 @@
 package calculadoraBasica;
 
 import java.awt.event.*;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
 
 public class Calculadora extends Interfaz implements ActionListener {
 	//  Declarar variables.
@@ -16,6 +13,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 	String operacion = "";
 
+	// Constructor.
 	public Calculadora() {
 		b1.addActionListener(this);
 		b2.addActionListener(this);
@@ -94,21 +92,20 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 		//  Botón C - Resetear valores.
 		if (e.getSource() == bc) {
-			//Al pulsar el botón de limpiar, se resetean el display y las variables de la calculadora,
 			display.setText("0");
 			limpiar();
 		}
 
-		//  Botón punto decimal.
+		//  Botón . - Punto decimal.
 		if (e.getSource() == bp) {
 			if (!puntoDecimal){
 				display.setText(display.getText() + ".");
-				puntoDecimal = true; //Ya no puedo añadir el punto decimal en este número
-				nuevoNumero = false; //Por si empiezo el número con punto decimal (por ejemplo, .537)
+				puntoDecimal = true;
+				nuevoNumero = false;
 			}
 		}
 
-		//  Suma.
+		//  Botón Suma.
 		if (e.getSource() == bs) {
 			if (operacion.equals("")) {
 				//Asocio la operación del botón a la variable
@@ -127,7 +124,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
-		//  Resta.
+		//  Botón Resta.
 		if (e.getSource() == br) {
 			if (operacion.equals("")) {
 				//Asocio la operación del botón a la variable
@@ -146,7 +143,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
-		//  Multiplicación.
+		//  Botón Multiplicación.
 		if (e.getSource() == bm) {
 			if (operacion.equals("")) {
 				//Asocio la operación del botón a la variable
@@ -165,7 +162,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
-		//  División.
+		//  Botón División.
 		if (e.getSource() == bd) {
 			if (operacion.equals("")) {
 				//Asocio la operación del botón a la variable
@@ -184,6 +181,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 			System.out.println(operando2 + " " + operacion + " " + operando1);
 		}
 
+		//  Botón Resultado.
 		if (e.getSource() == bi) {
 			//Al pulsar el botón de resultado, directamente lo calculo y reseteo la calculadora,
 			//sin necesidad de almacenar el resultado para futuras operaciones
@@ -191,15 +189,11 @@ public class Calculadora extends Interfaz implements ActionListener {
 		}
 	}
 
-	// Calcula el resultado en función de la operación seleccionada y lo devuelve formateado en el display
+	//  Métodos.
 	private double resultado(){
-
-		//recojo el valor del display
 		operando1 = Double.parseDouble(display.getText());
 
-		//Selecciono y realizo operación
-		switch (operacion){
-
+		switch (operacion) {
 			case "+" :  resultado = operando2 + operando1;
 				break;
 			case "-" :  resultado = operando2 - operando1;
@@ -208,28 +202,19 @@ public class Calculadora extends Interfaz implements ActionListener {
 				break;
 			case "/" :  resultado = operando2 / operando1;
 				break;
-
 		}
 
-		//Formateo y muestro en el display
-		Locale localeActual = Locale.GERMAN;
-		DecimalFormatSymbols simbolos = new DecimalFormatSymbols(localeActual);
-		simbolos.setDecimalSeparator('.');
-		DecimalFormat formatoResultado = new DecimalFormat("#.######", simbolos);
-		display.setText(String.valueOf(formatoResultado.format(resultado)));
+		display.setText(String.valueOf(resultado));
 
-		//Limpio variables para poder continuar
 		limpiar();
 
-		//Devuelvo el valor del resultado
 		return resultado;
-
 	}
 
-	//Resetea los valores de la calculadora para poder continuar haciendo operaciones
 	private void limpiar(){
-		operando1 = operando2 = 0;
 		operacion = "";
+		operando1 = 0;
+		operando2 = 0;
 		nuevoNumero = true;
 		puntoDecimal = false;
 	}
