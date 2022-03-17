@@ -174,22 +174,22 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 		switch (operacion) {
 			case "+" :
-				Suma suma = new Suma(operando1, operando2);
+				Suma suma = new Suma(operando2, operando1);
 				resultado = suma.getRes();
 				suma.imprimirResultado();
 				break;
 			case "-" :
-				Resta resta = new Resta(operando1, operando2);
+				Resta resta = new Resta(operando2, operando1);
 				resultado = resta.getRes();
 				resta.imprimirResultado();
 				break;
 			case "*" :
-				Multiplicacion multiplicacion = new Multiplicacion(operando1, operando2);
+				Multiplicacion multiplicacion = new Multiplicacion(operando2, operando1);
 				resultado = multiplicacion.getRes();
 				multiplicacion.imprimirResultado();
 				break;
 			case "/" :
-				Division division = new Division(operando1, operando2);
+				Division division = new Division(operando2, operando1);
 				resultado = division.getRes();
 				division.imprimirResultado();
 				break;
