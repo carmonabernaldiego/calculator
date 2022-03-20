@@ -1,11 +1,130 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Calculadora extends Interfaz implements ActionListener {
+	private boolean isOperator(char ch) {
+		return ch == '+' || ch == '-' || ch == '*' || ch == '/';
+	}
+
+	private int getPrecedence(char ch) {
+		if (ch == '+' || ch == '-') {
+			return 1;
+		}
+		if (ch == '*' || ch == '/') {
+			return 2;
+		}
+		return 0;
+	}
+
+	private void processOperator(char t) {
+		double a, b;
+		if (valueStack.empty()) {
+			System.out.println("Expression error.");
+			error = true;
+			return;
+		} else {
+			b = valueStack.peek();
+			valueStack.pop();
+		}
+		if (valueStack.empty()) {
+			System.out.println("Expression error.");
+			error = true;
+			return;
+		} else {
+			a = valueStack.peek();
+			valueStack.pop();
+		}
+		double r;
+		if (t == '+') {
+			Suma suma = new Suma(a, b);
+			r = suma.getRes();
+			suma.imprimirResultado();
+		} else if (t == '-') {
+			Resta resta = new Resta(a, b);
+			r = resta.getRes();
+			resta.imprimirResultado();
+		} else if (t == '*') {
+			Multiplicacion multiplicacion = new Multiplicacion(a, b);
+			r = multiplicacion.getRes();
+			multiplicacion.imprimirResultado();
+		} else if(t == '/') {
+			Division division = new Division(a, b);
+			r = division.getRes();
+			division.imprimirResultado();
+		} else {
+			System.out.println("Operator error.");
+			error = true;
+			return;
+		}
+		valueStack.push(r);
+	}
+
+	public String processInput(String input) {
+		// The tokens that make up the input
+		String[] tokens = input.split(" ");
+
+		// Main loop - process all input tokens
+		for (int n = 0; n < tokens.length; n++) {
+			String nextToken = tokens[n];
+			char ch = nextToken.charAt(0);
+			if (ch >= '0' && ch <= '9') {
+				double value = Double.parseDouble(nextToken);
+				valueStack.push(value);
+			} else if (isOperator(ch)) {
+				if (operatorStack.empty() || getPrecedence(ch) > getPrecedence(operatorStack.peek())) {
+					operatorStack.push(ch);
+				} else {
+					while (!operatorStack.empty() && getPrecedence(ch) <= getPrecedence(operatorStack.peek())) {
+						char toProcess = operatorStack.peek();
+						operatorStack.pop();
+						processOperator(toProcess);
+					}
+					operatorStack.push(ch);
+				}
+			} else if (ch == '(') {
+				operatorStack.push(ch);
+			} else if (ch == ')') {
+				while (!operatorStack.empty() && isOperator(operatorStack.peek())) {
+					char toProcess = operatorStack.peek();
+					operatorStack.pop();
+					processOperator(toProcess);
+				}
+				if (!operatorStack.empty() && operatorStack.peek() == '(') {
+					operatorStack.pop();
+				} else {
+					System.out.println("Error: unbalanced parenthesis.");
+					error = true;
+				}
+			}
+		}
+		// Empty out the operator stack at the end of the input
+		while (!operatorStack.empty() && isOperator(operatorStack.peek())) {
+			char toProcess = operatorStack.peek();
+			operatorStack.pop();
+			processOperator(toProcess);
+		}
+		// Print the result if no error has been seen.
+		if (error == false) {
+			double result = valueStack.peek();
+			valueStack.pop();
+			if (!operatorStack.empty() || !valueStack.empty()) {
+				System.out.println("Expression error.");
+			} else {
+				System.out.println("The result is " + result);
+			}
+		}
+		return input;
+	}
+
+	private Pila<Character> operatorStack;
+	private Pila<Double> valueStack;
+	private boolean error;
+
 	//  Declarar variables.
 	boolean nuevoNumero = true;
 	boolean puntoDecimal = false;
@@ -18,6 +137,10 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 	// Constructor.
 	public Calculadora() {
+		operatorStack = new Pila<Character>();
+		valueStack = new Pila<Double>();
+		error = false;
+
 		b1.addActionListener(this);
 		b2.addActionListener(this);
 		b3.addActionListener(this);
@@ -101,6 +224,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón C - Resetear valores.
 		if (e.getSource() == bc) {
 			display.setText("0");
+			displayOperators.setText("");
 			limpiar();
 			resultado = 0;
 		}
@@ -109,62 +233,54 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == bp) {
 			if(!display.getText().contains(".")) {
 				if (!puntoDecimal) {
-					display.setText(display.getText() + ".");
-					puntoDecimal = true;
-					nuevoNumero = false;
+					if (nuevoNumero) {
+						display.setText("0.");
+						nuevoNumero = false;
+					} else {
+						display.setText(display.getText() + ".");
+						puntoDecimal = true;
+						nuevoNumero = false;
+					}
 				}
+			} else {
+				display.setText("0.");
+				nuevoNumero = false;
 			}
 		}
 
 		//  Botón Suma.
 		if (e.getSource() == bs) {
-			if (operacion.equals("")) {
-				operacion = "+";
-				operando2 = Double.parseDouble(display.getText());
+			if(!nuevoNumero) {
+				displayOperators.setText(displayOperators.getText() + display.getText() + " + ");
 				nuevoNumero = true;
 				puntoDecimal = false;
-			} else {
-				operando2 = resultado();
-				operacion = "+";
 			}
 		}
 
 		//  Botón Resta.
 		if (e.getSource() == br) {
-			if (operacion.equals("")) {
-				operacion = "-";
-				operando2 = Double.parseDouble(display.getText());
+			if(!nuevoNumero) {
+				displayOperators.setText(displayOperators.getText() + display.getText() + " - ");
 				nuevoNumero = true;
 				puntoDecimal = false;
-			} else {
-				operando2 = resultado();
-				operacion = "-";
 			}
 		}
 
 		//  Botón Multiplicación.
 		if (e.getSource() == bm) {
-			if (operacion.equals("")) {
-				operacion = "*";
-				operando2 = Double.parseDouble(display.getText());
+			if(!nuevoNumero) {
+				displayOperators.setText(displayOperators.getText() + display.getText() + " * ");
 				nuevoNumero = true;
 				puntoDecimal = false;
-			} else {
-				operando2 = resultado();
-				operacion = "*";
 			}
 		}
 
 		//  Botón División.
 		if (e.getSource() == bd) {
-			if (operacion.equals("")) {
-				operacion = "/";
-				operando2 = Double.parseDouble(display.getText());
+			if(!nuevoNumero) {
+				displayOperators.setText(displayOperators.getText() + display.getText() + " / ");
 				nuevoNumero = true;
 				puntoDecimal = false;
-			} else {
-				operando2 = resultado();
-				operacion = "/";
 			}
 		}
 
@@ -176,30 +292,12 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 	//  Métodos.
 	private double resultado(){
-		operando1 = Double.parseDouble(display.getText());
+		String userInput = displayOperators.getText();
 
-		switch (operacion) {
-			case "+" :
-				Suma suma = new Suma(operando2, operando1);
-				resultado = suma.getRes();
-				suma.imprimirResultado();
-				break;
-			case "-" :
-				Resta resta = new Resta(operando2, operando1);
-				resultado = resta.getRes();
-				resta.imprimirResultado();
-				break;
-			case "*" :
-				Multiplicacion multiplicacion = new Multiplicacion(operando2, operando1);
-				resultado = multiplicacion.getRes();
-				multiplicacion.imprimirResultado();
-				break;
-			case "/" :
-				Division division = new Division(operando2, operando1);
-				resultado = division.getRes();
-				division.imprimirResultado();
-				break;
-		}
+		userInput = userInput.substring(0, userInput.length() - 1);
+
+
+		resultado =  Double.parseDouble(processInput(userInput));
 
 		//Formateo y muestro en el display
 		Locale localeActual = Locale.ENGLISH;

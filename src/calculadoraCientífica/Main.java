@@ -1,4 +1,4 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
 public class Main {
 	//  Método Principal.

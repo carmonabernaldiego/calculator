@@ -1,6 +1,6 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
-public class Division extends Operacion{
+public class Division extends Operacion {
 	double division = 0;
 
 	public Division(double num1, double num2) {

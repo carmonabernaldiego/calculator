@@ -1,18 +1,10 @@
-package fullcalculator;
+package calculadoraCientífica;
 
 public class Pila<T> {
 	private ElementoPila<T> top;
 
 	public Pila() {
 		top = null;
-	}
-
-	public boolean empty() {
-		return top == null;
-	}
-
-	public T peek() {
-		return top.value;
 	}
 
 	public void push(T x) {
@@ -23,5 +15,13 @@ public class Pila<T> {
 
 	public void pop() {
 		top = top.next;
+	}
+
+	public T peek() {
+		return top.value;
+	}
+
+	public boolean empty() {
+		return top == null;
 	}
 }

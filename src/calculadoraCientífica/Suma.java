@@ -1,4 +1,4 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
 public class Suma extends Operacion {
 	private double suma;

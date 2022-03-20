@@ -1,6 +1,6 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
-public class Multiplicacion extends Operacion{
+public class Multiplicacion extends Operacion {
 	private double multiplicacion;
 
 	public Multiplicacion(double num1, double num2) {

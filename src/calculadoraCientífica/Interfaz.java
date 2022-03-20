@@ -1,27 +1,33 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Interfaz extends JFrame {
-	JTextField display;
+	JTextField display, displayOperators;
 	JButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
 	JButton bs, br, bd, bm, bp, bi, bc;
 	JPanel superior, medio, inferior;
 
 	public Interfaz() {
 		//  Interfaz Gráfica para el Usuario.
-		initComponentes();
-		initPantalla();
+		inicializarComponentes();
+		dibujarPantalla();
 	}
 
-	private void initComponentes() {
+	private void inicializarComponentes() {
 		//  Declarar componentes.
 		//  Display.
 		display = new JTextField("0");
-		display.setFont(new Font("Dialog", Font.BOLD, 36));
+		display.setFont(new Font("Dialog", Font.BOLD, 30));
 		display.setHorizontalAlignment(JTextField.RIGHT);
 		display.setEditable(false);
+
+		//  Display Operators.
+		displayOperators = new JTextField("");
+		displayOperators.setFont(new Font("Dialog", Font.BOLD, 18));
+		displayOperators.setHorizontalAlignment(JTextField.RIGHT);
+		displayOperators.setEditable(false);
 
 		// Botones numéricos.
 		b1 = new JButton("1");
@@ -50,11 +56,12 @@ public class Interfaz extends JFrame {
 		inferior = new JPanel();
 	}
 
-	private void initPantalla() {
+	private void dibujarPantalla() {
 		//  Colocar componentes.
 		setLayout(new BorderLayout(0,10));
-		superior.setLayout(new BorderLayout());
-		superior.add("Center" ,display);
+		superior.setLayout(new GridLayout(2 ,1));
+		superior.add(displayOperators);
+		superior.add(display);
 
 		medio.setLayout(new GridLayout(4 ,4));
 		medio.add(b7);

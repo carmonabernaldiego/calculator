@@ -1,6 +1,6 @@
-package calculadoraBasica;
+package calculadoraCientífica;
 
-public class Resta extends Operacion{
+public class Resta extends Operacion {
 	private double resta;
 
 	public Resta(double num1, double num2) {

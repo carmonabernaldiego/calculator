@@ -1,4 +1,4 @@
-package fullcalculator;
+package calculadoraCientífica;
 
 public class ElementoPila<T> {
 	public T value;
