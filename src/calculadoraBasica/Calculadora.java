@@ -1,6 +1,9 @@
 package calculadoraBasica;
 
 import java.awt.event.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class Calculadora extends Interfaz implements ActionListener {
 	//  Declarar variables.
@@ -99,14 +102,17 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == bc) {
 			display.setText("0");
 			limpiar();
+			resultado = 0;
 		}
 
 		//  Botón . - Punto decimal.
 		if (e.getSource() == bp) {
-			if (!puntoDecimal) {
-				display.setText(display.getText() + ".");
-				puntoDecimal = true;
-				nuevoNumero = false;
+			if(!display.getText().contains(".")) {
+				if (!puntoDecimal) {
+					display.setText(display.getText() + ".");
+					puntoDecimal = true;
+					nuevoNumero = false;
+				}
 			}
 		}
 
@@ -118,8 +124,8 @@ public class Calculadora extends Interfaz implements ActionListener {
 				nuevoNumero = true;
 				puntoDecimal = false;
 			} else {
-				operacion = "+";
 				operando2 = resultado();
+				operacion = "+";
 			}
 		}
 
@@ -131,8 +137,8 @@ public class Calculadora extends Interfaz implements ActionListener {
 				nuevoNumero = true;
 				puntoDecimal = false;
 			} else {
-				operacion = "-";
 				operando2 = resultado();
+				operacion = "-";
 			}
 		}
 
@@ -144,8 +150,8 @@ public class Calculadora extends Interfaz implements ActionListener {
 				nuevoNumero = true;
 				puntoDecimal = false;
 			} else {
-				operacion = "*";
 				operando2 = resultado();
+				operacion = "*";
 			}
 		}
 
@@ -157,8 +163,8 @@ public class Calculadora extends Interfaz implements ActionListener {
 				nuevoNumero = true;
 				puntoDecimal = false;
 			} else {
-				operacion = "/";
 				operando2 = resultado();
+				operacion = "/";
 			}
 		}
 
@@ -195,7 +201,12 @@ public class Calculadora extends Interfaz implements ActionListener {
 				break;
 		}
 
-		display.setText(String.valueOf(resultado));
+		//Formateo y muestro en el display
+		Locale localeActual = Locale.ENGLISH;
+		DecimalFormatSymbols simbolos = new DecimalFormatSymbols(localeActual);
+		simbolos.setDecimalSeparator('.');
+		DecimalFormat formatoResultado = new DecimalFormat("#.######", simbolos);
+		display.setText(String.valueOf(formatoResultado.format(resultado)));
 
 		limpiar();
 
