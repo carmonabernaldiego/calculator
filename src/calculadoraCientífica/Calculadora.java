@@ -310,7 +310,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 			} else {
 				if (nuevoNumero) {
 					display.setText("0.");
-					nuevoNumero = true;
+					nuevoNumero = false;
 				}
 			}
 		}
