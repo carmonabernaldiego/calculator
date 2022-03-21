@@ -12,19 +12,19 @@ public class Calculadora extends Interfaz implements ActionListener {
 	private boolean puntoDecimal;
 	private boolean error;
 
-	private Pila<Character> operatorStack;
-	private Pila<Double> valueStack;
+	private Pila<String> PilaOperadores;
+	private Pila<Double> PilaValores;
 
 	private double resultado = 0;
 
-	// Constructor.
+	//  Constructor.
 	public Calculadora() {
 		nuevoNumero = true;
 		puntoDecimal = false;
 		error = false;
 
-		operatorStack = new Pila<Character>();
-		valueStack = new Pila<Double>();
+		PilaOperadores = new Pila<String>();
+		PilaValores = new Pila<Double>();
 
 		b1.addActionListener(this);
 		b2.addActionListener(this);
@@ -45,116 +45,188 @@ public class Calculadora extends Interfaz implements ActionListener {
 		bc.addActionListener(this);
 	}
 
-	private boolean isOperator(char ch) {
-		return ch == '+' || ch == '-' || ch == '*' || ch == '/';
+	private void limpiar(){
+		nuevoNumero = true;
+		puntoDecimal = false;
+		error = false;
 	}
 
-	private int getPrecedence(char ch) {
-		if (ch == '+' || ch == '-') {
+	private boolean esNumero(String cadena) {
+		boolean numero;
+
+		try {
+			Integer.parseInt(cadena);
+			numero = true;
+		} catch (NumberFormatException excepcion) {
+			numero = false;
+		}
+
+		return numero;
+	}
+
+	private boolean esOperador(String ch) {
+		return ch.equals("+") || ch.equals("-") || ch.equals("*") || ch.equals("/");
+	}
+
+	private int getOrden(String operador) {
+		if (operador.equals("+") || operador.equals("-")) {
 			return 1;
 		}
-		if (ch == '*' || ch == '/') {
+		if (operador.equals("*") || operador.equals("/")) {
 			return 2;
 		}
 		return 0;
 	}
 
-	private void processOperator(char t) {
+	private void procesarOperacion(String calculo) {
 		double a, b;
-		if (valueStack.empty()) {
+
+		if (PilaValores.empty()) {
 			System.out.println("Error de expresión.");
 			error = true;
 			return;
 		} else {
-			b = valueStack.peek();
-			valueStack.pop();
+			b = PilaValores.peek();
+			PilaValores.pop();
 		}
-		if (valueStack.empty()) {
+
+		if (PilaValores.empty()) {
 			System.out.println("Error de expresión.");
 			error = true;
 			return;
 		} else {
-			a = valueStack.peek();
-			valueStack.pop();
+			a = PilaValores.peek();
+			PilaValores.pop();
 		}
-		double r;
-		if (t == '+') {
-			Suma suma = new Suma(a, b);
-			r = suma.getRes();
-			suma.imprimirResultado();
-		} else if (t == '-') {
-			Resta resta = new Resta(a, b);
-			r = resta.getRes();
-			resta.imprimirResultado();
-		} else if (t == '*') {
-			Multiplicacion multiplicacion = new Multiplicacion(a, b);
-			r = multiplicacion.getRes();
-			multiplicacion.imprimirResultado();
-		} else if(t == '/') {
-			Division division = new Division(a, b);
-			r = division.getRes();
-			division.imprimirResultado();
-		} else {
-			System.out.println("Error del operador.");
-			error = true;
-			return;
+
+		double result;
+
+		switch (calculo) {
+			case "+" -> {
+				Suma suma = new Suma(a, b);
+				result = suma.getRes();
+				suma.imprimirResultado();
+			}
+			case "-" -> {
+				Resta resta = new Resta(a, b);
+				result = resta.getRes();
+				resta.imprimirResultado();
+			}
+			case "*" -> {
+				Multiplicacion multiplicacion = new Multiplicacion(a, b);
+				result = multiplicacion.getRes();
+				multiplicacion.imprimirResultado();
+			}
+			case "/" -> {
+				Division division = new Division(a, b);
+				result = division.getRes();
+				division.imprimirResultado();
+			}
+			default -> {
+				System.out.println("Error del operador.");
+				error = true;
+				return;
+			}
 		}
-		valueStack.push(r);
+		PilaValores.push(result);
 	}
 
-	public void processInput(String input) {
-		// The tokens that make up the input
-		String[] tokens = input.split(" ");
+	public void procesarEntradaCalculo(String entrada) {
+		//  Dividir cadena.
+		String[] elementos = entrada.split(" ");
 
-		// Main loop - process all input tokens
-		for (int n = 0; n < tokens.length; n++) {
-			String nextToken = tokens[n];
-			char ch = nextToken.charAt(0);
-			if (ch >= '0' && ch <= '9') {
-				double value = Double.parseDouble(nextToken);
-				valueStack.push(value);
-			} else if (isOperator(ch)) {
-				if (operatorStack.empty() || getPrecedence(ch) > getPrecedence(operatorStack.peek())) {
-					operatorStack.push(ch);
+		//  Bucle principal - Procesar todos los elementos del array[].
+		for (int n = 0; n < elementos.length; n++) {
+			if (esNumero(elementos[n])) {
+				double valor = Double.parseDouble(elementos[n]);
+				PilaValores.push(valor);
+			} else {
+				if (PilaOperadores.empty() || getOrden(elementos[n]) > getOrden(PilaOperadores.peek())) {
+					PilaOperadores.push(elementos[n]);
 				} else {
-					while (!operatorStack.empty() && getPrecedence(ch) <= getPrecedence(operatorStack.peek())) {
-						char toProcess = operatorStack.peek();
-						operatorStack.pop();
-						processOperator(toProcess);
+					while (!PilaOperadores.empty() && getOrden(elementos[n]) <= getOrden(PilaOperadores.peek())) {
+						String operador = PilaOperadores.peek();
+						PilaOperadores.pop();
+						procesarOperacion(operador);
 					}
-					operatorStack.push(ch);
+					PilaOperadores.push(elementos[n]);
 				}
-			} else if (ch == '(') {
-				operatorStack.push(ch);
-			} else if (ch == ')') {
-				while (!operatorStack.empty() && isOperator(operatorStack.peek())) {
-					char toProcess = operatorStack.peek();
-					operatorStack.pop();
-					processOperator(toProcess);
+			}
+
+			if (elementos[n].equals("(")) {
+				PilaOperadores.push(elementos[n]);
+			} else if (elementos[n].equals(")")) {
+				while (!PilaOperadores.empty() && esOperador(PilaOperadores.peek())) {
+					String operador = PilaOperadores.peek();
+					PilaOperadores.pop();
+					procesarOperacion(operador);
 				}
-				if (!operatorStack.empty() && operatorStack.peek() == '(') {
-					operatorStack.pop();
+				if (!PilaOperadores.empty() && PilaOperadores.peek().equals("(")) {
+					PilaOperadores.pop();
 				} else {
 					System.out.println("Error: paréntesis desequilibrado.");
 					error = true;
 				}
 			}
 		}
-		// Empty out the operator stack at the end of the input
-		while (!operatorStack.empty() && isOperator(operatorStack.peek())) {
-			char toProcess = operatorStack.peek();
-			operatorStack.pop();
-			processOperator(toProcess);
+
+		//  Vaciar pila de operadores.
+		while (!PilaOperadores.empty() && esOperador(PilaOperadores.peek())) {
+			String operador = PilaOperadores.peek();
+			PilaOperadores.pop();
+			procesarOperacion(operador);
 		}
-		// Print the result if no error has been seen.
+
+		//  Imprimir el resultado si no se ha visto ningún error.
 		if (error == false) {
-			double result = valueStack.peek();
-			valueStack.pop();
-			if (!operatorStack.empty() || !valueStack.empty()) {
+			double result = PilaValores.peek();
+			PilaValores.pop();
+			if (!PilaOperadores.empty() || !PilaValores.empty()) {
 				System.out.println("Error de expresión.");
 			} else {
 				resultado = result;
 			}
+		}
+	}
+
+	//  Obtener resultado.
+	private void resultado(){
+		if(!display.getText().equals("0")) {
+			if (!nuevoNumero) {
+				nuevoNumero = true;
+
+				displayCalculo.setText(displayCalculo.getText() + display.getText());
+
+				String calculo = displayCalculo.getText();
+
+				procesarEntradaCalculo(calculo);
+			} else {
+				char caracter = displayCalculo.getText().charAt(displayCalculo.getText().length() - 2);
+
+				if(caracter == '/') {
+					displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " / ");
+					nuevoNumero = false;
+					resultado();
+				} else if (caracter == '*') {
+					displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " * ");
+					nuevoNumero = false;
+					resultado();
+				} else if (caracter == '+') {
+					displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " + ");
+					nuevoNumero = false;
+					resultado();
+				} else if (caracter == '-') {
+					displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " - ");
+					nuevoNumero = false;
+					resultado();
+				}
+			}
+			//Formateo y muestro en el display
+			Locale localeActual = Locale.ENGLISH;
+			DecimalFormatSymbols simbolos = new DecimalFormatSymbols(localeActual);
+			simbolos.setDecimalSeparator('.');
+			DecimalFormat formatoResultado = new DecimalFormat("#.######", simbolos);
+			display.setText(String.valueOf(formatoResultado.format(resultado)));
 		}
 	}
 
@@ -217,7 +289,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón C - Resetear valores.
 		if (e.getSource() == bc) {
 			display.setText("0");
-			displayOperators.setText("");
+			displayCalculo.setText("");
 			limpiar();
 			resultado = 0;
 		}
@@ -244,17 +316,17 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón Suma.
 		if (e.getSource() == bs) {
 			if(resultado != 0) {
-				displayOperators.setText(display.getText() + " + ");
+				displayCalculo.setText(display.getText() + " + ");
 			} else {
 				if (!nuevoNumero) {
-					displayOperators.setText(displayOperators.getText() + display.getText() + " + ");
+					displayCalculo.setText(displayCalculo.getText() + display.getText() + " + ");
 					nuevoNumero = true;
 					puntoDecimal = false;
 				} else {
-					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+					char caracter = displayCalculo.getText().charAt(displayCalculo.getText().length() - 2);
 
 					if (caracter == '-' || caracter == '*' || caracter == '/') {
-						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " + ");
+						displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " + ");
 					}
 				}
 			}
@@ -263,17 +335,17 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón Resta.
 		if (e.getSource() == br) {
 			if(resultado != 0) {
-				displayOperators.setText(display.getText() + " - ");
+				displayCalculo.setText(display.getText() + " - ");
 			} else {
 				if (!nuevoNumero) {
-					displayOperators.setText(displayOperators.getText() + display.getText() + " - ");
+					displayCalculo.setText(displayCalculo.getText() + display.getText() + " - ");
 					nuevoNumero = true;
 					puntoDecimal = false;
 				} else {
-					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+					char caracter = displayCalculo.getText().charAt(displayCalculo.getText().length() - 2);
 
 					if (caracter == '+' || caracter == '*' || caracter == '/') {
-						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " - ");
+						displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " - ");
 					}
 				}
 			}
@@ -282,17 +354,17 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón Multiplicación.
 		if (e.getSource() == bm) {
 			if(resultado != 0) {
-				displayOperators.setText(display.getText() + " * ");
+				displayCalculo.setText(display.getText() + " * ");
 			} else {
 				if (!nuevoNumero) {
-					displayOperators.setText(displayOperators.getText() + display.getText() + " * ");
+					displayCalculo.setText(displayCalculo.getText() + display.getText() + " * ");
 					nuevoNumero = true;
 					puntoDecimal = false;
 				} else {
-					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+					char caracter = displayCalculo.getText().charAt(displayCalculo.getText().length() - 2);
 
 					if (caracter == '/' || caracter == '+' || caracter == '-') {
-						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " * ");
+						displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " * ");
 					}
 				}
 			}
@@ -301,17 +373,17 @@ public class Calculadora extends Interfaz implements ActionListener {
 		//  Botón División.
 		if (e.getSource() == bd) {
 			if(resultado != 0) {
-				displayOperators.setText(display.getText() + " / ");
+				displayCalculo.setText(display.getText() + " / ");
 			} else {
 				if (!nuevoNumero) {
-					displayOperators.setText(displayOperators.getText() + display.getText() + " / ");
+					displayCalculo.setText(displayCalculo.getText() + display.getText() + " / ");
 					nuevoNumero = true;
 					puntoDecimal = false;
 				} else {
-					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+					char caracter = displayCalculo.getText().charAt(displayCalculo.getText().length() - 2);
 
 					if (caracter == '*' || caracter == '+' || caracter == '-') {
-						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " / ");
+						displayCalculo.setText(displayCalculo.getText().substring(0, displayCalculo.getText().length() - 3) + " / ");
 					}
 				}
 			}
@@ -321,52 +393,5 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == bi) {
 			resultado();
 		}
-	}
-
-	//  Métodos.
-	private void resultado(){
-		if(!display.getText().equals("0")) {
-			if (!nuevoNumero) {
-				nuevoNumero = true;
-
-				displayOperators.setText(displayOperators.getText() + display.getText());
-
-				String calculo = displayOperators.getText();
-
-				processInput(calculo);
-			} else {
-				char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
-
-				if(caracter == '/') {
-					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " / ");
-					nuevoNumero = false;
-					resultado();
-				} else if (caracter == '*') {
-					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " * ");
-					nuevoNumero = false;
-					resultado();
-				} else if (caracter == '+') {
-					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " + ");
-					nuevoNumero = false;
-					resultado();
-				} else if (caracter == '-') {
-					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " - ");
-					nuevoNumero = false;
-					resultado();
-				}
-			}
-			//Formateo y muestro en el display
-			Locale localeActual = Locale.ENGLISH;
-			DecimalFormatSymbols simbolos = new DecimalFormatSymbols(localeActual);
-			simbolos.setDecimalSeparator('.');
-			DecimalFormat formatoResultado = new DecimalFormat("#.######", simbolos);
-			display.setText(String.valueOf(formatoResultado.format(resultado)));
-		}
-	}
-
-	private void limpiar(){
-		nuevoNumero = true;
-		puntoDecimal = false;
-		error = false;
 	}
 }

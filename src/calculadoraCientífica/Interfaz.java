@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Interfaz extends JFrame {
-	JTextField display, displayOperators;
+	JTextField display, displayCalculo;
 	JButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b0;
 	JButton bs, br, bd, bm, bp, bi, bc;
 	JPanel superior, medio, inferior;
@@ -24,10 +24,10 @@ public class Interfaz extends JFrame {
 		display.setEditable(false);
 
 		//  Display Operators.
-		displayOperators = new JTextField("");
-		displayOperators.setFont(new Font("Dialog", Font.BOLD, 18));
-		displayOperators.setHorizontalAlignment(JTextField.RIGHT);
-		displayOperators.setEditable(false);
+		displayCalculo = new JTextField("");
+		displayCalculo.setFont(new Font("Dialog", Font.BOLD, 18));
+		displayCalculo.setHorizontalAlignment(JTextField.RIGHT);
+		displayCalculo.setEditable(false);
 
 		// Botones numéricos.
 		b1 = new JButton("1");
@@ -60,7 +60,7 @@ public class Interfaz extends JFrame {
 		//  Colocar componentes.
 		setLayout(new BorderLayout(0,10));
 		superior.setLayout(new GridLayout(2 ,1));
-		superior.add(displayOperators);
+		superior.add(displayCalculo);
 		superior.add(display);
 
 		medio.setLayout(new GridLayout(4 ,4));
