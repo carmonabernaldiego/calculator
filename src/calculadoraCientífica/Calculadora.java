@@ -7,6 +7,44 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Calculadora extends Interfaz implements ActionListener {
+	//  Declarar variables.
+	private boolean nuevoNumero;
+	private boolean puntoDecimal;
+	private boolean error;
+
+	private Pila<Character> operatorStack;
+	private Pila<Double> valueStack;
+
+	private double resultado = 0;
+
+	// Constructor.
+	public Calculadora() {
+		nuevoNumero = true;
+		puntoDecimal = false;
+		error = false;
+
+		operatorStack = new Pila<Character>();
+		valueStack = new Pila<Double>();
+
+		b1.addActionListener(this);
+		b2.addActionListener(this);
+		b3.addActionListener(this);
+		b4.addActionListener(this);
+		b5.addActionListener(this);
+		b6.addActionListener(this);
+		b7.addActionListener(this);
+		b8.addActionListener(this);
+		b9.addActionListener(this);
+		b0.addActionListener(this);
+		bs.addActionListener(this);
+		br.addActionListener(this);
+		bd.addActionListener(this);
+		bm.addActionListener(this);
+		bp.addActionListener(this);
+		bi.addActionListener(this);
+		bc.addActionListener(this);
+	}
+
 	private boolean isOperator(char ch) {
 		return ch == '+' || ch == '-' || ch == '*' || ch == '/';
 	}
@@ -24,7 +62,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 	private void processOperator(char t) {
 		double a, b;
 		if (valueStack.empty()) {
-			System.out.println("Expression error.");
+			System.out.println("Error de expresión.");
 			error = true;
 			return;
 		} else {
@@ -32,7 +70,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 			valueStack.pop();
 		}
 		if (valueStack.empty()) {
-			System.out.println("Expression error.");
+			System.out.println("Error de expresión.");
 			error = true;
 			return;
 		} else {
@@ -57,14 +95,14 @@ public class Calculadora extends Interfaz implements ActionListener {
 			r = division.getRes();
 			division.imprimirResultado();
 		} else {
-			System.out.println("Operator error.");
+			System.out.println("Error del operador.");
 			error = true;
 			return;
 		}
 		valueStack.push(r);
 	}
 
-	public String processInput(String input) {
+	public void processInput(String input) {
 		// The tokens that make up the input
 		String[] tokens = input.split(" ");
 
@@ -97,7 +135,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 				if (!operatorStack.empty() && operatorStack.peek() == '(') {
 					operatorStack.pop();
 				} else {
-					System.out.println("Error: unbalanced parenthesis.");
+					System.out.println("Error: paréntesis desequilibrado.");
 					error = true;
 				}
 			}
@@ -113,51 +151,11 @@ public class Calculadora extends Interfaz implements ActionListener {
 			double result = valueStack.peek();
 			valueStack.pop();
 			if (!operatorStack.empty() || !valueStack.empty()) {
-				System.out.println("Expression error.");
+				System.out.println("Error de expresión.");
 			} else {
-				System.out.println("The result is " + result);
+				resultado = result;
 			}
 		}
-		return input;
-	}
-
-	private Pila<Character> operatorStack;
-	private Pila<Double> valueStack;
-	private boolean error;
-
-	//  Declarar variables.
-	boolean nuevoNumero = true;
-	boolean puntoDecimal = false;
-
-	double operando1 = 0;
-	double operando2 = 0;
-	double resultado = 0;
-
-	String operacion = "";
-
-	// Constructor.
-	public Calculadora() {
-		operatorStack = new Pila<Character>();
-		valueStack = new Pila<Double>();
-		error = false;
-
-		b1.addActionListener(this);
-		b2.addActionListener(this);
-		b3.addActionListener(this);
-		b4.addActionListener(this);
-		b5.addActionListener(this);
-		b6.addActionListener(this);
-		b7.addActionListener(this);
-		b8.addActionListener(this);
-		b9.addActionListener(this);
-		b0.addActionListener(this);
-		bs.addActionListener(this);
-		br.addActionListener(this);
-		bd.addActionListener(this);
-		bm.addActionListener(this);
-		bp.addActionListener(this);
-		bi.addActionListener(this);
-		bc.addActionListener(this);
 	}
 
 	//  Manejo de los eventos para cada botón.
@@ -191,11 +189,6 @@ public class Calculadora extends Interfaz implements ActionListener {
 			} else if (e.getSource() == b9) {
 				display.setText("9");
 				nuevoNumero = false;
-			} else if (e.getSource() == b0) {
-				if(!display.getText().equals("0")) {
-					display.setText("0");
-					nuevoNumero = false;
-				}
 			}
 		} else {
 			if (e.getSource() == b1) {
@@ -250,37 +243,77 @@ public class Calculadora extends Interfaz implements ActionListener {
 
 		//  Botón Suma.
 		if (e.getSource() == bs) {
-			if(!nuevoNumero) {
-				displayOperators.setText(displayOperators.getText() + display.getText() + " + ");
-				nuevoNumero = true;
-				puntoDecimal = false;
+			if(resultado != 0) {
+				displayOperators.setText(display.getText() + " + ");
+			} else {
+				if (!nuevoNumero) {
+					displayOperators.setText(displayOperators.getText() + display.getText() + " + ");
+					nuevoNumero = true;
+					puntoDecimal = false;
+				} else {
+					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+
+					if (caracter == '-' || caracter == '*' || caracter == '/') {
+						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " + ");
+					}
+				}
 			}
 		}
 
 		//  Botón Resta.
 		if (e.getSource() == br) {
-			if(!nuevoNumero) {
-				displayOperators.setText(displayOperators.getText() + display.getText() + " - ");
-				nuevoNumero = true;
-				puntoDecimal = false;
+			if(resultado != 0) {
+				displayOperators.setText(display.getText() + " - ");
+			} else {
+				if (!nuevoNumero) {
+					displayOperators.setText(displayOperators.getText() + display.getText() + " - ");
+					nuevoNumero = true;
+					puntoDecimal = false;
+				} else {
+					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+
+					if (caracter == '+' || caracter == '*' || caracter == '/') {
+						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " - ");
+					}
+				}
 			}
 		}
 
 		//  Botón Multiplicación.
 		if (e.getSource() == bm) {
-			if(!nuevoNumero) {
-				displayOperators.setText(displayOperators.getText() + display.getText() + " * ");
-				nuevoNumero = true;
-				puntoDecimal = false;
+			if(resultado != 0) {
+				displayOperators.setText(display.getText() + " * ");
+			} else {
+				if (!nuevoNumero) {
+					displayOperators.setText(displayOperators.getText() + display.getText() + " * ");
+					nuevoNumero = true;
+					puntoDecimal = false;
+				} else {
+					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+
+					if (caracter == '/' || caracter == '+' || caracter == '-') {
+						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " * ");
+					}
+				}
 			}
 		}
 
 		//  Botón División.
 		if (e.getSource() == bd) {
-			if(!nuevoNumero) {
-				displayOperators.setText(displayOperators.getText() + display.getText() + " / ");
-				nuevoNumero = true;
-				puntoDecimal = false;
+			if(resultado != 0) {
+				displayOperators.setText(display.getText() + " / ");
+			} else {
+				if (!nuevoNumero) {
+					displayOperators.setText(displayOperators.getText() + display.getText() + " / ");
+					nuevoNumero = true;
+					puntoDecimal = false;
+				} else {
+					char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
+
+					if (caracter == '*' || caracter == '+' || caracter == '-') {
+						displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " / ");
+					}
+				}
 			}
 		}
 
@@ -291,31 +324,49 @@ public class Calculadora extends Interfaz implements ActionListener {
 	}
 
 	//  Métodos.
-	private double resultado(){
-		String userInput = displayOperators.getText();
+	private void resultado(){
+		if(!display.getText().equals("0")) {
+			if (!nuevoNumero) {
+				nuevoNumero = true;
 
-		userInput = userInput.substring(0, userInput.length() - 1);
+				displayOperators.setText(displayOperators.getText() + display.getText());
 
+				String calculo = displayOperators.getText();
 
-		resultado =  Double.parseDouble(processInput(userInput));
+				processInput(calculo);
+			} else {
+				char caracter = displayOperators.getText().charAt(displayOperators.getText().length() - 2);
 
-		//Formateo y muestro en el display
-		Locale localeActual = Locale.ENGLISH;
-		DecimalFormatSymbols simbolos = new DecimalFormatSymbols(localeActual);
-		simbolos.setDecimalSeparator('.');
-		DecimalFormat formatoResultado = new DecimalFormat("#.######", simbolos);
-		display.setText(String.valueOf(formatoResultado.format(resultado)));
-
-		limpiar();
-
-		return resultado;
+				if(caracter == '/') {
+					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " / ");
+					nuevoNumero = false;
+					resultado();
+				} else if (caracter == '*') {
+					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " * ");
+					nuevoNumero = false;
+					resultado();
+				} else if (caracter == '+') {
+					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " + ");
+					nuevoNumero = false;
+					resultado();
+				} else if (caracter == '-') {
+					displayOperators.setText(displayOperators.getText().substring(0, displayOperators.getText().length() - 3) + " - ");
+					nuevoNumero = false;
+					resultado();
+				}
+			}
+			//Formateo y muestro en el display
+			Locale localeActual = Locale.ENGLISH;
+			DecimalFormatSymbols simbolos = new DecimalFormatSymbols(localeActual);
+			simbolos.setDecimalSeparator('.');
+			DecimalFormat formatoResultado = new DecimalFormat("#.######", simbolos);
+			display.setText(String.valueOf(formatoResultado.format(resultado)));
+		}
 	}
 
 	private void limpiar(){
-		operacion = "";
-		operando1 = 0;
-		operando2 = 0;
 		nuevoNumero = true;
 		puntoDecimal = false;
+		error = false;
 	}
 }

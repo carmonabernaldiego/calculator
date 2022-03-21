@@ -90,7 +90,7 @@ public class Interfaz extends JFrame {
 		add("South" ,inferior);
 
 		//  Configuración de Ventana.
-		setTitle("Calculadora Basica");
+		setTitle("Calculadora");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setBounds(50 ,50 ,336 ,450);
 		setResizable(false);
