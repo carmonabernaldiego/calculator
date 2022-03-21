@@ -55,7 +55,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		boolean numero;
 
 		try {
-			Integer.parseInt(cadena);
+			Double.parseDouble(cadena);
 			numero = true;
 		} catch (NumberFormatException excepcion) {
 			numero = false;
@@ -308,8 +308,10 @@ public class Calculadora extends Interfaz implements ActionListener {
 					}
 				}
 			} else {
-				display.setText("0.");
-				nuevoNumero = false;
+				if (nuevoNumero) {
+					display.setText("0.");
+					nuevoNumero = true;
+				}
 			}
 		}
 
@@ -317,6 +319,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == bs) {
 			if(resultado != 0) {
 				displayCalculo.setText(display.getText() + " + ");
+				resultado = 0;
 			} else {
 				if (!nuevoNumero) {
 					displayCalculo.setText(displayCalculo.getText() + display.getText() + " + ");
@@ -336,6 +339,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == br) {
 			if(resultado != 0) {
 				displayCalculo.setText(display.getText() + " - ");
+				resultado = 0;
 			} else {
 				if (!nuevoNumero) {
 					displayCalculo.setText(displayCalculo.getText() + display.getText() + " - ");
@@ -355,6 +359,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == bm) {
 			if(resultado != 0) {
 				displayCalculo.setText(display.getText() + " * ");
+				resultado = 0;
 			} else {
 				if (!nuevoNumero) {
 					displayCalculo.setText(displayCalculo.getText() + display.getText() + " * ");
@@ -374,6 +379,7 @@ public class Calculadora extends Interfaz implements ActionListener {
 		if (e.getSource() == bd) {
 			if(resultado != 0) {
 				displayCalculo.setText(display.getText() + " / ");
+				resultado = 0;
 			} else {
 				if (!nuevoNumero) {
 					displayCalculo.setText(displayCalculo.getText() + display.getText() + " / ");
