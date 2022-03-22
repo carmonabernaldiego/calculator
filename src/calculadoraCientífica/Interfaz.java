@@ -27,7 +27,7 @@ public class Interfaz extends JFrame {
 		displayCalculo = new JTextField("");
 		displayCalculo.setFont(new Font("Dialog", Font.BOLD, 18));
 		displayCalculo.setHorizontalAlignment(JTextField.RIGHT);
-		displayCalculo.setEditable(false);
+		displayCalculo.setEditable(true);
 
 		// Botones numéricos.
 		b1 = new JButton("1");
