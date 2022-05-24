@@ -1,5 +1,5 @@
-﻿# Calculadora
-Programación Orientada a Objetos.
+# Calculadora
+Programación Orientada a Objetos
 
 Calculadora de orden (jerarquía) de operaciones.
 
