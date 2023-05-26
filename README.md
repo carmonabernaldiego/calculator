@@ -1,6 +1,6 @@
 # Calculadora
 Programación Orientada a Objetos
 
-Calculadora de orden (jerarquía) de operaciones.
+Calculadora de Orden (Jerarquía) de Operaciones
 
 ![img.png](images/img.png)
